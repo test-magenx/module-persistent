@@ -86,9 +86,6 @@ class QuoteManagerTest extends TestCase
      */
     private $customerDataFactory;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp(): void
     {
         $this->persistentSessionMock = $this->createMock(\Magento\Persistent\Helper\Session::class);
@@ -98,7 +95,7 @@ class QuoteManagerTest extends TestCase
                 'setCustomerData',
                 'clearQuote',
                 'clearStorage',
-                'getQuote'
+                'getQuote',
             ])
                 ->onlyMethods(['removePersistentCookie'])
                 ->disableOriginalConstructor()
@@ -119,7 +116,7 @@ class QuoteManagerTest extends TestCase
                 'setCustomerLastname',
                 'setCustomerGroupId',
                 'setIsPersistent',
-                'getCustomerId'
+                'getCustomerId',
             ])
             ->onlyMethods([
                 'getId',
@@ -137,7 +134,6 @@ class QuoteManagerTest extends TestCase
                 'setExtensionAttributes',
                 '__wakeup',
                 'setCustomer',
-                'getCustomer'
             ])
             ->disableOriginalConstructor()
             ->getMock();
@@ -157,10 +153,7 @@ class QuoteManagerTest extends TestCase
         );
     }
 
-    /**
-    * @return void
-    */
-    public function testSetGuestWithEmptyQuote(): void
+    public function testSetGuestWithEmptyQuote()
     {
         $this->checkoutSessionMock->expects($this->once())
             ->method('getQuote')->willReturn(null);
@@ -174,10 +167,7 @@ class QuoteManagerTest extends TestCase
         $this->model->setGuest(false);
     }
 
-    /**
-    * @return void
-    */
-    public function testSetGuestWithEmptyQuoteId(): void
+    public function testSetGuestWithEmptyQuoteId()
     {
         $this->checkoutSessionMock->expects($this->once())
             ->method('getQuote')->willReturn($this->quoteMock);
@@ -192,10 +182,7 @@ class QuoteManagerTest extends TestCase
         $this->model->setGuest(false);
     }
 
-    /**
-    * @return void
-    */
-    public function testSetGuestWhenShoppingCartAndQuoteAreNotPersistent(): void
+    public function testSetGuestWhenShoppingCartAndQuoteAreNotPersistent()
     {
         $this->checkoutSessionMock->expects($this->once())
             ->method('getQuote')->willReturn($this->quoteMock);
@@ -211,10 +198,7 @@ class QuoteManagerTest extends TestCase
         $this->model->setGuest(true);
     }
 
-    /**
-    * @return void
-    */
-    public function testSetGuest(): void
+    public function testSetGuest()
     {
         $customerId = 22;
         $this->checkoutSessionMock->expects($this->once())
@@ -283,10 +267,7 @@ class QuoteManagerTest extends TestCase
         $this->model->setGuest(false);
     }
 
-    /**
-    * @return void
-    */
-    public function testExpireWithActiveQuoteAndCustomerId(): void
+    public function testExpireWithActiveQuoteAndCustomerId()
     {
         $this->checkoutSessionMock->expects($this->once())
             ->method('setLoadInactive')->willReturn($this->sessionMock);
@@ -308,10 +289,7 @@ class QuoteManagerTest extends TestCase
         $this->model->expire();
     }
 
-    /**
-    * @return void
-    */
-    public function testExpire(): void
+    public function testExpire()
     {
         $this->checkoutSessionMock->expects($this->once())
             ->method('setLoadInactive')->willReturn($this->sessionMock);
@@ -338,10 +316,7 @@ class QuoteManagerTest extends TestCase
         $this->model->expire();
     }
 
-    /**
-    * @return void
-    */
-    public function testConvertCustomerCartToGuest(): void
+    public function testConvertCustomerCartToGuest()
     {
         $quoteId = 1;
         $addressArgs = ['customerAddressId' => null];
@@ -368,13 +343,6 @@ class QuoteManagerTest extends TestCase
             ->method('setIsPersistent')->with(false)->willReturn($this->quoteMock);
         $this->quoteMock->expects($this->exactly(3))
             ->method('getAddressesCollection')->willReturn($this->abstractCollectionMock);
-        $customerMock = $this->createMock(CustomerInterface::class);
-        $customerMock->expects($this->once())
-            ->method('setId')
-            ->with(null)
-            ->willReturnSelf();
-        $this->quoteMock->expects($this->once())
-            ->method('getCustomer')->willReturn($customerMock);
         $this->abstractCollectionMock->expects($this->exactly(3))->method('walk')->with(
             $this->logicalOr(
                 $this->equalTo('setCustomerAddressId'),
@@ -395,10 +363,7 @@ class QuoteManagerTest extends TestCase
         $this->model->convertCustomerCartToGuest();
     }
 
-    /**
-    * @return void
-    */
-    public function testConvertCustomerCartToGuestWithEmptyQuote(): void
+    public function testConvertCustomerCartToGuestWithEmptyQuote()
     {
         $this->checkoutSessionMock->expects($this->once())
             ->method('getQuoteId')->willReturn(null);
@@ -406,10 +371,7 @@ class QuoteManagerTest extends TestCase
         $this->model->convertCustomerCartToGuest();
     }
 
-    /**
-    * @return void
-    */
-    public function testConvertCustomerCartToGuestWithEmptyQuoteId(): void
+    public function testConvertCustomerCartToGuestWithEmptyQuoteId()
     {
         $this->checkoutSessionMock->expects($this->once())
             ->method('getQuoteId')->willReturn(1);
