@@ -6,7 +6,6 @@
 namespace Magento\Persistent\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Framework\Exception\NoSuchEntityException;
 
 /**
  * Class EmulateCustomer
@@ -87,9 +86,9 @@ class EmulateCustomerObserver implements ObserverInterface
             /** @var  \Magento\Customer\Api\Data\CustomerInterface $customer */
             $customer = $this->customerRepository->getById($this->_persistentSession->getSession()->getCustomerId());
             if ($defaultShipping = $customer->getDefaultShipping()) {
-                $address = $this->getCustomerAddressById((int) $defaultShipping);
-
-                if ($address !== null) {
+                /** @var  \Magento\Customer\Model\Data\Address $address */
+                $address = $this->addressRepository->getById($defaultShipping);
+                if ($address) {
                     $this->_customerSession->setDefaultTaxShippingAddress(
                         [
                             'country_id' => $address->getCountryId(),
@@ -103,9 +102,8 @@ class EmulateCustomerObserver implements ObserverInterface
             }
 
             if ($defaultBilling = $customer->getDefaultBilling()) {
-                $address = $this->getCustomerAddressById((int) $defaultBilling);
-
-                if ($address !== null) {
+                $address = $this->addressRepository->getById($defaultBilling);
+                if ($address) {
                     $this->_customerSession->setDefaultTaxBillingAddress([
                         'country_id' => $address->getCountryId(),
                         'region_id' => $address->getRegion() ? $address->getRegionId() : null,
@@ -119,20 +117,5 @@ class EmulateCustomerObserver implements ObserverInterface
                 ->setIsCustomerEmulated(true);
         }
         return $this;
-    }
-
-    /**
-     * Returns customer address by id
-     *
-     * @param int $addressId
-     * @return \Magento\Customer\Api\Data\AddressInterface|null
-     */
-    private function getCustomerAddressById(int $addressId)
-    {
-        try {
-            return $this->addressRepository->getById($addressId);
-        } catch (NoSuchEntityException $exception) {
-            return null;
-        }
     }
 }
